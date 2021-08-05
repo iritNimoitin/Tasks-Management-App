@@ -5,6 +5,7 @@ import User from './User';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { TextField } from "@material-ui/core";
+import UserUtils from '../Utils/UserUtils';
 
 function Users() {
 
@@ -15,7 +16,7 @@ function Users() {
         setUsersDisplay(filterUsers);
     }
     useEffect(async () => {
-        let resp = await axios.get("https://jsonplaceholder.typicode.com/users");
+        let resp = await UserUtils.getAllUsers();
         setUsers(resp.data);
         setUsersDisplay(resp.data);
     }, [])
@@ -39,7 +40,24 @@ function Users() {
 
             {
                 usersDisplay.map((user) => {
-                    return <User userData={user} key={user.id} />
+                    return <User userData={user} key={user.id}
+                        UpdateCallback={async (updatedUser) => {
+                            let id = user.id;
+                            let resp = await UserUtils.updateUser(id, updatedUser);
+                            let filteredUsers = users.filter(user => user.id != id);
+                            setUsers([...filteredUsers, updatedUser]);
+                            setUsersDisplay([...filteredUsers, updatedUser]);
+
+                        }}
+
+                        DeleteCallback={async () => {
+                            let id = user.id;
+                            let resp = await UserUtils.deleteUser(id);
+                            let filteredUsers = users.filter(user => user.id != id);
+                            setUsersDisplay(filteredUsers);
+                            setUsers(filteredUsers);
+
+                        }} />
                 })
             }
 
