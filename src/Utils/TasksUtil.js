@@ -12,4 +12,8 @@ const updateTask = (id, obj) => {
     return axios.put("https://jsonplaceholder.typicode.com/todos" + "/" + id, obj)
 }
 
-export default { getAllTasks, getTask, updateTask }
+const addTask = (obj) => {
+    return axios.post("https://jsonplaceholder.typicode.com/todos", obj)
+}
+
+export default { getAllTasks, getTask, updateTask, addTask }

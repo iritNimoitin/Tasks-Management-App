@@ -8,4 +8,8 @@ const getPost = (id) => {
     return axios.get("https://jsonplaceholder.typicode.com/posts" + "/" + id)
 }
 
-export default { getAllPosts, getPost }
+const addPost = (obj) => {
+    return axios.post("https://jsonplaceholder.typicode.com/posts", obj)
+}
+
+export default { getAllPosts, getPost, addPost }

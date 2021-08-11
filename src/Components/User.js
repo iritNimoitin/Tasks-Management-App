@@ -152,14 +152,26 @@ function User(props) {
                 <div className={classes.tasks}>
 
                     {
-                        showTasks && <Tasks todos={todos} user={user}
+                        showTasks &&
+                        <Tasks todos={todos} user={user}
                             UpdateTaskCallback={async (updatedTask) => {
                                 let id = updatedTask.id;
                                 let resp = await TasksUtil.updateTask(id, updatedTask);
                                 let filteredTasks = todos.filter(task => task.id != id);
                                 setTodos([...filteredTasks, updatedTask]);
 
-                            }} />
+                            }}
+                            AddTaskCallback={async (newTask) => {
+                                console.log(newTask);
+                                let resp = await TasksUtil.addTask(newTask);
+                                console.log(resp.data);
+                                setTodos([...todos, newTask]);
+                                setShowTasks(true);
+
+
+                            }}
+
+                        />
 
                     }
                 </div>
