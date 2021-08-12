@@ -2,19 +2,14 @@
     display:table-row;
     text-align: left;
     border: 3px solid black;
-    /* padding: 20px 20px; */
     border-radius: 10px;
     box-shadow: 5px 5px 10px;
-    /* margin-bottom: 100px; */
-    /* margin-bottom: 7rem; */
     margin:50px 50px;
     
 }
 
 .App {
     display : block;
-    /* margin-left: 120px; */
-    /* margin-bottom: 7rem; */
     margin: 50px auto 50px auto;
     width: 400px;
     height: 400px;

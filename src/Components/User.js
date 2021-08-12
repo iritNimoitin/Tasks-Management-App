@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
-import { blue, pink } from '@material-ui/core/colors';
+import { blue, green, pink } from '@material-ui/core/colors';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { TextField, Typography } from "@material-ui/core";
@@ -23,6 +23,12 @@ const theme = createTheme({
             main: pink[500],
         },
     },
+    button: {
+        primary: {
+            main: green[500],
+        },
+
+    }
 });
 const useStyles = makeStyles({
     root: {
@@ -46,7 +52,7 @@ function User(props) {
     const [todos, setTodos] = useState([])
     const [color, setColor] = useState('2px 5px 7px 4px rgba(255, 0, 0, .7)');
     const [beckColor, setBeckColor] = useState('white');
-    const [completed, setCompleted] = useState(true)
+    const [completed, setCompleted] = useState(false)
     const [showTasks, setShowTasks] = useState(false)
     const [showDetails, setShowDetails] = useState(false)
     const [user, setUser] = useState(props.userData);
@@ -64,43 +70,69 @@ function User(props) {
         }
     }, [])
 
+    const checkCompleted = (tasks) => {
+        if (tasks.reduce((acc, task) => acc && task.completed, true)) {
+            setColor('2px 5px 7px 4px rgba(0, 255, 0, .7)');
+            setBeckColor('rgba(0, 255, 0, .7)');
+            setCompleted(true);
+        }
+    }
+
     const showInfo = () => {
-        setShowDetails(true);
+        if (showDetails) {
+            setShowDetails(false);
+        } else {
+            setShowDetails(true);
+        }
+
     }
-    const closeInfo = () => {
-        setShowDetails(false);
-    }
+
     const UpdateUser = async (e) => {
         e.preventDefault();
         props.UpdateCallback(user);
     }
+
     const DeleteUser = async (e) => {
         e.preventDefault();
         props.DeleteCallback();
     }
-    const showTodos = () => {
-        if (beckColor === 'white') {
-            setBeckColor('red');
-            setShowTasks(true);
-        } else {
-            setBeckColor('white');
-            setShowTasks(false);
-        }
 
+    const showTodos = () => {
+        if (!props.showAddUser) {
+            if (beckColor === 'white') {
+                if (completed === true) {
+                    setBeckColor('rgba(0, 255, 0, .7)');
+                } else {
+                    setBeckColor('rgba(255, 0, 0, .7)');
+                }
+                setShowTasks(true);
+            } else {
+                setBeckColor('white');
+                setShowTasks(false);
+            }
+        }
 
     }
 
 
     return (
-        // <div className="Box">
         <ThemeProvider theme={theme}>
             <div className={classes.provider}>
                 <Card style={{ boxShadow: color, backgroundColor: beckColor }} className={classes.root} >
                     <CardContent>
                         <div  >
                             <div className="ContactUs">
-
-                                <span onClick={showTodos}> User ID : {props.userData.id}</span> <br /><br />
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: "space-between"
+                                }}>
+                                    <span onClick={showTodos}> User ID : {props.userData.id}</span>
+                                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                    <Button variant="contained" color="primary" onClick={showTodos}>
+                                        Tasks
+                                    </Button><br /><br />
+                                </div>
                                 <form >
 
                                     <TextField label="Name" variant="outlined" className="TextBox" value={user.name}
@@ -120,7 +152,7 @@ function User(props) {
                                                 Delete
                                             </Button>
                                         </Box>
-                                        <Button variant="contained" onMouseOver={showInfo} >
+                                        <Button variant="contained" onClick={showInfo} >
                                             Other Data
                                         </Button>
                                     </Box>
@@ -132,7 +164,7 @@ function User(props) {
 
                         <br />
                         {
-                            showDetails ? <div id="details" style={{ border: '1px solid black', margin: '30px 30px 30px 30px', padding: '20px 20px 20px 20px', borderRadius: '20px' }} onClick={closeInfo}>
+                            showDetails ? <div id="details" style={{ border: '1px solid black', margin: '30px 30px 30px 30px', padding: '20px 20px 20px 20px', borderRadius: '20px' }} >
                                 <form >
                                     <TextField label="Street" variant="outlined" className="TextBox" value={user.address.street} onChange={e => setUser({ ...user, address: { ...user.address, street: e.target.value } })} />
                                     <br /><br />
@@ -155,11 +187,12 @@ function User(props) {
                         showTasks &&
                         <Tasks todos={todos} user={user}
                             UpdateTaskCallback={async (updatedTask) => {
+                                console.log(updatedTask)
                                 let id = updatedTask.id;
-                                let resp = await TasksUtil.updateTask(id, updatedTask);
+                                await TasksUtil.updateTask(id, updatedTask);
                                 let filteredTasks = todos.filter(task => task.id != id);
                                 setTodos([...filteredTasks, updatedTask]);
-
+                                checkCompleted([...filteredTasks, updatedTask]);
                             }}
                             AddTaskCallback={async (newTask) => {
                                 console.log(newTask);

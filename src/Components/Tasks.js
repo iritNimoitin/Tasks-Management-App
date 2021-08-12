@@ -11,8 +11,6 @@ import Box from '@material-ui/core/Box';
 
 
 
-
-
 const theme = createTheme({
     spacing: value => value ** 2,
     palette: {
@@ -61,9 +59,9 @@ function Tasks(props) {
         setPosts(allPosts);
     }, [])
 
-    const markCompleted = async (id) => {
-        let filteredTask = props.todos.filter(task => task.id == id);
-        let updatedTask = { ...filteredTask[0], completed: true }
+    const markCompleted = (id) => {
+        let filteredTask = props.todos.find(task => task.id == id);
+        let updatedTask = { ...filteredTask, completed: true }
         props.UpdateTaskCallback(updatedTask);
     }
     const showAddTask = () => {
